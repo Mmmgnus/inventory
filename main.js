@@ -23,141 +23,208 @@ assetsLoader.load([
   { id: 4, src: './images/4.png', width: 384, height: 128 },
   { id: 5, src: './images/5.png', width: 128, height: 192 },
   { id: 6, src: './images/6.png', width: 256, height: 320 },
+  { id: 7, src: './images/7.png', width: 256, height: 256 },
+  { id: 8, src: './images/8.png', width: 256, height: 320 },
+  { id: 9, src: './images/9.png', width: 64, height: 64 },
+  { id: 10, src: './images/10.png', width: 256, height: 128 },
 ]).then(() => {
   console.info('[Assets loaded]');
   requestAnimationFrame(tick);
 });
 
-containers.push(new Container({
-  x: 64,
-  y: 300,
-  columns: 7,
-  rows: 7,
-  slots: [
-    {
-      size: {
-        x: [0, 1],
-        y: [0, 1]
-      },
-      item: new Item({
-        itemId: 3,
-        x: 64,
-        y: 300,
-        width: 64 * 2,
-        height: 64 * 2,
-      }),
-    },
-    {
-      size: {
-        x: [0, 2],
-        y: [2, 4]
-      },
-      item: new Item({
-        itemId: 5,
-        x: 64,
-        y: 300 + (64 * 2),
-        width: 64 * 2,
-        height: 64 * 3,
-      }),
-    },
-    {
-      size: {
-        x: [0, 5],
-        y: [5, 1]
-      },
-      item: new Item({
-        itemId: 4,
-        x: 64 + (64 * 0),
-        y: 300 + (64 * 5),
-        width: 384,
-        height: 128,
-      }),
-    },
-    {
-      size: {
-        x: [2, 6],
-        y: [0, 4]
-      },
-      item: new Item({
-        itemId: 6,
-        x: 64 + (64 * 2),
-        y: 300 + (64 * 0),
-        width: 256,
-        height: 320,
-      }),
-    }
-  ]
-}))
+const stash = new Container({ x: 64, y: 300, columns: 10, rows: 13 });
+stash.addItem({
+  position: { x: 1, y: 1 },
+  item: new Item({
+    itemId: 3,
+    slotSizeX: 2, 
+    slotSizeY: 2
+  })
+});
 
-containers.push(new Container({
-  x: 600,
-  y: 512,
-  columns: 1,
-  rows: 2,
-  slots: [
-    {
-      size: {
-        x: [0, 0],
-        y: [0, 0]
-      },
-      item: new Item({
-        itemId: 1,
-        x: 600,
-        y: 512,
-        width: 64,
-        height: 64,
-      })
-    },
-    {
-      size: {
-        x: [1, 1],
-        y: [1, 1]
-      },
-      item: new Item({
-        itemId: 1,
-        x: 600,
-        y: 576,
-        width: 64,
-        height: 64
-      })
-    }
-  ]
-}))
+stash.addItem({
+  position: { x: 5, y: 5 },
+  item: new Item({
+    itemId: 1,
+    slotSizeX: 1,
+    slotSizeY: 1
+  })
+});
 
-containers.push(new Container ({
-  x: 64,
-  y: 64,
-  columns: 2,
-  rows: 2,
-  slots: [
-    {
-      size: {
-        x: [0, 1],
-        y: [0, 0]
-      },
-      item: new Item({
-        itemId: 2,
-        x: 64,
-        y: 64,
-        width: 128,
-        height: 64,
-      }),
-    },
-    {
-      size: {
-        x: [0, 0],
-        y: [1, 1]
-      },
-      item: new Item({
-        itemId: 1,
-        x: 64,
-        y: 128,
-        width: 64,
-        height: 64,
-      })
-    }
-  ]
-}));
+stash.addItem({
+  position: { x: 1, y: 3 },
+  item: new Item({
+    itemId: 5,
+    slotSizeX: 2,
+    slotSizeY: 3
+  })
+})
+
+stash.addItem({
+  position: { x: 1, y: 6 },
+  item: new Item({
+    itemId: 4,
+    slotSizeX: 6,
+    slotSizeY: 2
+  })
+})
+
+stash.addItem({
+  position: { x: 3, y: 1 },
+  item: new Item({
+    itemId: 6,
+    slotSizeX: 4,
+    slotSizeY: 5
+  })
+})
+
+stash.addItem({
+  position: { x: 7, y: 1 },
+  item: new Item({
+    itemId: 8,
+    slotSizeX: 4,
+    slotSizeY: 5
+  })
+})
+
+stash.addItem({
+  position: { x: 7, y: 6 },
+  item: new Item({
+    itemId: 7,
+    slotSizeX: 4,
+    slotSizeY: 4
+  })
+})
+
+stash.addItem({
+  position: { x: 1, y: 8 },
+  item: new Item({
+    itemId: 10,
+    slotSizeX: 4,
+    slotSizeY: 2
+  })
+})
+
+const smallContainer = new Container({ x: 256, y: 64, columns: 1, rows: 2})
+smallContainer.addItem({
+  position: { x: 1, y: 1 },
+  item: new Item({
+    itemId: 1,
+    slotSizeX: 1,
+    slotSizeY: 1,
+  })
+});
+
+smallContainer.addItem({
+  position: { x: 1, y: 2 },
+  item: new Item({
+    itemId: 1,
+    slotSizeX: 1,
+    slotSizeY: 1,
+  })
+})
+
+const mediumContainer = new Container({ x: 64, y: 64, columns: 2, rows: 2 })
+mediumContainer.addItem({
+  position: { x: 1, y: 2 },
+  item: new Item({
+    itemId: 1,
+    slotSizeX: 1,
+    slotSizeY: 1,
+  })
+});
+
+mediumContainer.addItem({
+  position: { x: 1, y: 1 },
+  item: new Item({
+    itemId: 2,
+    slotSizeX: 2,
+    slotSizeY: 1,
+  })
+});
+
+mediumContainer.addItem({
+  position: { x: 2, y: 2 },
+  item: new Item({
+    itemId: 9,
+    slotSizeX: 1,
+    slotSizeY: 1,
+  })
+});
+
+containers.push(stash);
+containers.push(smallContainer);
+containers.push(mediumContainer);
+
+// containers.push(new Container({
+//   x: 600,
+//   y: 512,
+//   columns: 1,
+//   rows: 2,
+//   slots: [
+//     {
+//       size: {
+//         x: [0, 0],
+//         y: [0, 0]
+//       },
+//       item: new Item({
+//         itemId: 1,
+//         x: 600,
+//         y: 512,
+//         width: 64,
+//         height: 64,
+//       })
+//     },
+//     {
+//       size: {
+//         x: [1, 1],
+//         y: [1, 1]
+//       },
+//       item: new Item({
+//         itemId: 1,
+//         x: 600,
+//         y: 576,
+//         width: 64,
+//         height: 64
+//       })
+//     }
+//   ]
+// }))
+
+// containers.push(new Container ({
+//   x: 64,
+//   y: 64,
+//   columns: 2,
+//   rows: 2,
+//   slots: [
+//     {
+//       size: {
+//         x: [0, 1],
+//         y: [0, 0]
+//       },
+//       item: new Item({
+//         itemId: 2,
+//         x: 64,
+//         y: 64,
+//         width: 128,
+//         height: 64,
+//       }),
+//     },
+//     {
+//       size: {
+//         x: [0, 0],
+//         y: [1, 1]
+//       },
+//       item: new Item({
+//         itemId: 1,
+//         x: 64,
+//         y: 128,
+//         width: 64,
+//         height: 64,
+//       })
+//     }
+//   ]
+// }));
 
 canvas.addEventListener('mousedown', clickHandler);
 

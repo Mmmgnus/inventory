@@ -6,12 +6,13 @@ function generateID() {
 }
 
 export default class Item extends Entity {
-  constructor ({ itemId, x, y, width, height, color }) {
+  constructor ({ itemId, x, y, slotSizeX, slotSizeY, width, height }) {
     super({ x, y, width, height});
     this.itemId = itemId;
     this.id = generateID();
-    this.color = color;
     this.dragged = false;
+    this.slotSizeX = slotSizeX;
+    this.slotSizeY = slotSizeY;
   }
 
   render (ctx, assetsLoader) {
@@ -19,7 +20,7 @@ export default class Item extends Entity {
       throw new Error('Missing Canvas context');
     }
 
-    const { x, y, color, width, height, dragged } = this;
+    const { x, y, width, height, dragged } = this;
     const sprite = assetsLoader.getSprite(this.itemId);
 
     if (!sprite) {

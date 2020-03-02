@@ -1,10 +1,10 @@
 export default class Container {
-  constructor ({ x, y, columns, rows, slots }) {
+  constructor ({ x, y, columns, rows }) {
     this.x = x;
     this.y = y;
     this.rows = rows;
     this.columns = columns;
-    this.slots = slots || []
+    this.slots = [];
   }
 
   getSlotIndex(item) {
@@ -25,6 +25,10 @@ export default class Container {
     return temp;
   }
 
+  getItems () {
+    return this.slots.map((slot) => slot.item);
+  }
+
   contains (item) {
     return this.slots.some((slot) => slot.item === item);
   }
@@ -40,7 +44,54 @@ export default class Container {
     console.log('slotVector:', slotVector.x, slotVector.y)
   }
 
-  add(item, slotPosition, draggedItemContainer) {
+  /**
+   * 
+   * @param {*} params
+   * @param {Item} params.item The item we want to add to the container.
+   * @param {x, y} params.size  
+   */
+  addItem ({ item, position }) {
+    const xSize = item.slotSizeX;
+    const ySize = item.slotSizeY;
+    const slotPosition = {x: position.x - 1, y: position.y - 1};
+    const slotVector = {
+      x: [slotPosition.x, (xSize === 1) ? slotPosition.x  : xSize - 1],
+      y: [slotPosition.y, (ySize === 1) ? slotPosition.y : ySize - 1],
+    }
+
+    item.x = this.x + (slotVector.x[0] * 64);
+    item.y = this.y + (slotVector.y[0] * 64);
+    item.width = item.slotSizeX * 64;
+    item.height = item.slotSizeY * 64;
+
+    const slot = {
+      size: {
+        x: [slotPosition.x, slotVector.x[1]],
+        y: [slotPosition.y, slotVector.x[1]]
+      },
+      item: item
+    }
+
+    this.slots.push(slot);
+  }
+
+  moveContainer ({x, y}) {
+    this.x = x;
+    this.y = y;
+
+    this.updateItems();
+  }
+
+  updateItems() {
+    this.slots.forEach((slot) => {
+      const { size, item } = slot;
+      console.log('slotsize', size);
+      item.x = this.x + (size.x[0] * 64);
+      item.y = this.y + (size.y[0] * 64);
+    });
+  }
+
+  add(item, slotPosition) {
     const xSize = item.width / 64;
     const ySize = item.height / 64;
     const slotVector = {
