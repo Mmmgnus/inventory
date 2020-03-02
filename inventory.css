@@ -1,4 +1,15 @@
+html {
+  background: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+body {
+  display: flex;
+  align-items: center;
+}
 canvas {
-  border: 3px solid black;
-  background: #eee;
+  background: #333;
 }
