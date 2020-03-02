@@ -17,11 +17,9 @@ export default class AssetsLoader {
       const { id, src, width, height } = asset;
       const sprite = new Sprite({ id, src, width, height })
       this.loadingAssets.push(sprite.load());
-      console.log('unloaded', this.loadingAssets)
     })
 
     return Promise.all(this.loadingAssets).then((...sprites) => {
-      console.log('Loaded sprites:', sprites[0]);
       this.assets = this.assets.concat(sprites[0]);
     })
   }

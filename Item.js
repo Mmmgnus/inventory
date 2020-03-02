@@ -29,17 +29,11 @@ export default class Item extends Entity {
 
     ctx.beginPath();
     ctx.fillStyle = '#202020';
-    ctx.strokeStyle = '#444';
+    ctx.strokeStyle = (dragged) ? '#888' : '#444';
     ctx.lineWidth = 1;
     ctx.rect(x, y, width, height);
     ctx.fill()
     sprite.render(ctx, x, y);
     ctx.stroke();
-
-    if (dragged) {
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = '#888';
-      ctx.stroke();
-    }
   }
 }

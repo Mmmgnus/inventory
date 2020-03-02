@@ -9,6 +9,8 @@ const render = new Render({
   assetsLoader: assetsLoader
 });
 
+var myAudio = document.createElement('audio');
+myAudio.src = './sounds/item-pickup.wav';
 
 let draggedItem;
 let draggedItemStartVector;
@@ -268,7 +270,9 @@ function clickHandler (event) {
     canvas.addEventListener('mousemove', moveHandler);
     canvas.addEventListener('mouseup', releaseHandler);
 
-    beep('sawtooth');
+    // beep('sawtooth');
+    // myAudio.currentTime = 0,
+    // myAudio.play();
   }
 }
 
@@ -364,7 +368,9 @@ function releaseHandler (event) {
 
   canvas.removeEventListener('mousemove', moveHandler);
   canvas.removeEventListener('mouseup', releaseHandler);
-  beep()
+  // myAudio.pause();
+  myAudio.currentTime = 0,
+  myAudio.play(0);
 }
 
 function renderContainers (containers) {
