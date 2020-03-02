@@ -29,6 +29,17 @@ export default class Container {
     return this.slots.some((slot) => slot.item === item);
   }
 
+  slotVector ({x, y}) {
+    const xSize = 64;
+    const ySize = 64;
+    const slotVector = {
+      x: [itemVector.x, (xSize === 1) ? itemVector.x : itemVector.x + xSize - 1],
+      y: [itemVector.y, (ySize === 1) ? itemVector.y : itemVector.y + ySize - 1],
+    }
+
+    console.log('slotVector:', slotVector.x, slotVector.y)
+  }
+
   add(item, slotPosition, draggedItemContainer) {
     const xSize = item.width / 64;
     const ySize = item.height / 64;

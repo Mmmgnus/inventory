@@ -21,7 +21,7 @@ assetsLoader.load([
   { id: 2, src: './images/2.png', width: 128, height: 64 },
   { id: 3, src: './images/3.png', width: 128, height: 128 },
   { id: 4, src: './images/4.png', width: 384, height: 128 },
-  { id: 5, src: './images/5.png', width: 64, height: 64 },
+  { id: 5, src: './images/5.png', width: 128, height: 192 },
   { id: 6, src: './images/6.png', width: 256, height: 320 },
 ]).then(() => {
   console.info('[Assets loaded]');
@@ -43,9 +43,48 @@ containers.push(new Container({
         itemId: 3,
         x: 64,
         y: 300,
-        width: 128,
+        width: 64 * 2,
+        height: 64 * 2,
+      }),
+    },
+    {
+      size: {
+        x: [0, 2],
+        y: [2, 4]
+      },
+      item: new Item({
+        itemId: 5,
+        x: 64,
+        y: 300 + (64 * 2),
+        width: 64 * 2,
+        height: 64 * 3,
+      }),
+    },
+    {
+      size: {
+        x: [0, 5],
+        y: [5, 1]
+      },
+      item: new Item({
+        itemId: 4,
+        x: 64 + (64 * 0),
+        y: 300 + (64 * 5),
+        width: 384,
         height: 128,
-      })
+      }),
+    },
+    {
+      size: {
+        x: [2, 6],
+        y: [0, 4]
+      },
+      item: new Item({
+        itemId: 6,
+        x: 64 + (64 * 2),
+        y: 300 + (64 * 0),
+        width: 256,
+        height: 320,
+      }),
     }
   ]
 }))
@@ -183,6 +222,20 @@ function moveHandler (event) {
   }
   item.x = mouse.x - offset.x;
   item.y = mouse.y - offset.y;
+
+  const container = getContainerAtVector({x: mouse.x, y: mouse.y});
+
+  if (container) {
+    const mouseXOff = event.clientX - container.x;
+    const mouseYOff = event.clientY - container.y;
+    const slotPositionVector = {
+      x: Math.floor(mouseXOff / 64) - 1,
+      y: Math.floor(mouseYOff / 64) - 1 
+    }
+
+    console.log('Slot:', slotPositionVector);
+    console.log('Mouse:', mouse.x, mouse.y)
+  }
 }
 
 function getContainerAtVector(vector) {
