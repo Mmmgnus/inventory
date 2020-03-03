@@ -28,12 +28,15 @@ export default class Item extends Entity {
     }
 
     ctx.beginPath();
+    ctx.font = '12px serif';
     ctx.fillStyle = '#202020';
     ctx.strokeStyle = (dragged) ? '#888' : '#444';
     ctx.lineWidth = 1;
     ctx.rect(x, y, width, height);
     ctx.fill()
     sprite.render(ctx, x, y);
+    ctx.fillStyle = '#fff',
+    ctx.fillText(`itemId: ${this.itemId}`, x + 10, y + 20);
     ctx.stroke();
   }
 }

@@ -45,15 +45,6 @@ stash.addItem({
 });
 
 stash.addItem({
-  position: { x: 5, y: 5 },
-  item: new Item({
-    itemId: 1,
-    slotSizeX: 1,
-    slotSizeY: 1
-  })
-});
-
-stash.addItem({
   position: { x: 1, y: 3 },
   item: new Item({
     itemId: 5,
@@ -145,88 +136,18 @@ mediumContainer.addItem({
   })
 });
 
-mediumContainer.addItem({
-  position: { x: 2, y: 2 },
-  item: new Item({
-    itemId: 9,
-    slotSizeX: 1,
-    slotSizeY: 1,
-  })
-});
+// mediumContainer.addItem({
+//   position: { x: 2, y: 2 },
+//   item: new Item({
+//     itemId: 9,
+//     slotSizeX: 1,
+//     slotSizeY: 1,
+//   })
+// });
 
 containers.push(stash);
 containers.push(smallContainer);
 containers.push(mediumContainer);
-
-// containers.push(new Container({
-//   x: 600,
-//   y: 512,
-//   columns: 1,
-//   rows: 2,
-//   slots: [
-//     {
-//       size: {
-//         x: [0, 0],
-//         y: [0, 0]
-//       },
-//       item: new Item({
-//         itemId: 1,
-//         x: 600,
-//         y: 512,
-//         width: 64,
-//         height: 64,
-//       })
-//     },
-//     {
-//       size: {
-//         x: [1, 1],
-//         y: [1, 1]
-//       },
-//       item: new Item({
-//         itemId: 1,
-//         x: 600,
-//         y: 576,
-//         width: 64,
-//         height: 64
-//       })
-//     }
-//   ]
-// }))
-
-// containers.push(new Container ({
-//   x: 64,
-//   y: 64,
-//   columns: 2,
-//   rows: 2,
-//   slots: [
-//     {
-//       size: {
-//         x: [0, 1],
-//         y: [0, 0]
-//       },
-//       item: new Item({
-//         itemId: 2,
-//         x: 64,
-//         y: 64,
-//         width: 128,
-//         height: 64,
-//       }),
-//     },
-//     {
-//       size: {
-//         x: [0, 0],
-//         y: [1, 1]
-//       },
-//       item: new Item({
-//         itemId: 1,
-//         x: 64,
-//         y: 128,
-//         width: 64,
-//         height: 64,
-//       })
-//     }
-//   ]
-// }));
 
 canvas.addEventListener('mousedown', clickHandler);
 
@@ -257,7 +178,7 @@ function clickHandler (event) {
 
   if (itemResult) {
     let item = itemResult.item;
-    console.info(` Item [${item.id}] is clicked.`);
+    console.info(` Item [${item.id}:${item.itemId}] is clicked.`);
     item.dragged = true;
     draggedItem = item;
     draggedItemStartVector = {
@@ -269,10 +190,6 @@ function clickHandler (event) {
 
     canvas.addEventListener('mousemove', moveHandler);
     canvas.addEventListener('mouseup', releaseHandler);
-
-    // beep('sawtooth');
-    // myAudio.currentTime = 0,
-    // myAudio.play();
   }
 }
 
@@ -304,8 +221,13 @@ function moveHandler (event) {
       y: Math.floor(mouseYOff / 64) - 1 
     }
 
-    console.log('Slot:', slotPositionVector);
-    console.log('Mouse:', mouse.x, mouse.y)
+    container.highlightSlots(item)
+
+    // console.log('Slot:', slotPositionVector);
+    // console.log('Mouse:', mouse.x, mouse.y)
+  }
+  else {
+    containers.forEach((container) => container.highlightSlots())
   }
 }
 
@@ -325,16 +247,17 @@ function releaseHandler (event) {
   const targetContainer = getContainerAtVector({x: mouseX, y: mouseY})
   
   if (targetContainer) {
+    targetContainer.highlightSlots();
     const mouseXOff = event.clientX - targetContainer.x;
     const mouseYOff = event.clientY - targetContainer.y;
     const slotPositionVector = {
       x: Math.floor(mouseXOff / 64),
       y: Math.floor(mouseYOff / 64)
     }
-
+    
     const itemXoff = draggedItem.x - targetContainer.x;
     const itemYoff = draggedItem.y - targetContainer.y;
-
+    
     
     const slotPosition = 
     {
@@ -342,6 +265,7 @@ function releaseHandler (event) {
       y: Math.floor((itemYoff) / 64),
     }
     
+    targetContainer.getItemBySlot(slotPosition, draggedItem);
     const vector = (slotPosition.x !== -1 && slotPosition.y !== -1) ? slotPosition : slotPositionVector;
 
     if (targetContainer.itemFitInContainer(vector, draggedItem)) {
@@ -349,7 +273,7 @@ function releaseHandler (event) {
         draggedItemContainer.remove(draggedItem)
       }
 
-      targetContainer.add(draggedItem, vector, draggedItemContainer);
+      targetContainer.add(draggedItem, vector);
     }
     else {
       draggedItem.x = draggedItemStartVector.x

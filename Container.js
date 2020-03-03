@@ -5,6 +5,7 @@ export default class Container {
     this.rows = rows;
     this.columns = columns;
     this.slots = [];
+    this.highlightedArea;
   }
 
   getSlotIndex(item) {
@@ -25,6 +26,45 @@ export default class Container {
     return temp;
   }
 
+  /*
+
+  { x: [], y: [] }
+
+        z   z
+  | a | a |   |  
+  |   |   | c |
+  | b | b |   |
+  | b | b |   |
+
+  a = [0, 1] [0, 0]
+  b = [0, 1] [2, 3]
+  c = [2, 2] [1, 1]
+
+  z = [1, 2] [0, 0]
+
+
+  x vs a = zx1(1) => ax1(0) && zx1(1) <= ax2(1) == hit!
+  x vs a = zx2(1) => ax2(0) && zx2(1) <= ax2(1) == miss!
+  x vs a = zy1(0) => ay1(0) && zy2(0) <= ay2(0) == hit!
+  x vs a = zy2(0) => ay2(0) && zy2(0) <= ay2(0) == hit!
+  */
+  getItemBySlot (queryVector, item) {
+    const x2 = queryVector.x + item.slotSizeX - 1;
+    const y2 = queryVector.y + item.slotSizeY - 1;
+    return this.slots.filter((slot) => {
+        let found = false; 
+        if (queryVector.x >= slot.size.x[0] && slot.size.x[1] >= queryVector.x && queryVector.y >= slot.size.y[0] && slot.size.y[1] >= queryVector.y) {
+          found = true;
+        }
+        if (x2 <= slot.size.x[1] && x2 >= slot.size.x[0] && y2 <= slot.size.y[1] && y2 >= slot.size.y[0] && queryVector.y < slot.size.x[1] && queryVector.y > slot.size.x[0]) {
+          found = true;
+        }
+
+        return found;
+
+      })
+  }
+
   getItems () {
     return this.slots.map((slot) => slot.item);
   }
@@ -41,7 +81,7 @@ export default class Container {
       y: [itemVector.y, (ySize === 1) ? itemVector.y : itemVector.y + ySize - 1],
     }
 
-    console.log('slotVector:', slotVector.x, slotVector.y)
+    // console.log('slotVector:', slotVector.x, slotVector.y)
   }
 
   /**
@@ -54,9 +94,10 @@ export default class Container {
     const xSize = item.slotSizeX;
     const ySize = item.slotSizeY;
     const slotPosition = {x: position.x - 1, y: position.y - 1};
+
     const slotVector = {
-      x: [slotPosition.x, (xSize === 1) ? slotPosition.x  : xSize - 1],
-      y: [slotPosition.y, (ySize === 1) ? slotPosition.y : ySize - 1],
+      x: [slotPosition.x, (xSize === 1) ? slotPosition.x : slotPosition.x + xSize - 1],
+      y: [slotPosition.y, (ySize === 1) ? slotPosition.y : slotPosition.y + ySize - 1],
     }
 
     item.x = this.x + (slotVector.x[0] * 64);
@@ -67,7 +108,7 @@ export default class Container {
     const slot = {
       size: {
         x: [slotPosition.x, slotVector.x[1]],
-        y: [slotPosition.y, slotVector.x[1]]
+        y: [slotPosition.y, slotVector.y[1]]
       },
       item: item
     }
@@ -85,7 +126,7 @@ export default class Container {
   updateItems() {
     this.slots.forEach((slot) => {
       const { size, item } = slot;
-      console.log('slotsize', size);
+      // console.log('slotsize', size);
       item.x = this.x + (size.x[0] * 64);
       item.y = this.y + (size.y[0] * 64);
     });
@@ -123,33 +164,29 @@ export default class Container {
   }
 
   itemFitInContainer(itemVector, item) {
-    const xSize = item.width / 64;
-    const ySize = item.height / 64;
-    const slotVector = {
-      x: [itemVector.x, (xSize === 1) ? itemVector.x : itemVector.x + xSize - 1],
-      y: [itemVector.y, (ySize === 1) ? itemVector.y : itemVector.y + ySize - 1],
+      return !this.getItemBySlot(itemVector, item).length
+  }
+
+  highlightSlots (item) {
+    if (!item) {
+      this.highlightedArea = undefined;
+      return;
     }
 
-    let isFitting = true;
-    this.slots.forEach((slot) => {
-      if (
-        slotVector.x[0] === -1 ||
-        slotVector.y[0] === -1 ||
-        slotVector.x[1] === -1 ||
-        slotVector.y[1] === -1 ||
-        // Start at the same position.
-        slot.size.x[0] === slotVector.x[0] && slot.size.y[0] === slotVector.y[0] ||
-        // End at the same position
-        slot.size.x[1] === slotVector.x[1] && slot.size.y[1] === slotVector.y[1] ||
-        // Ends outside of the container
-        slotVector.x[1] > this.columns - 1 ||
-        slotVector.y[1] > this.rows - 1
-      ) {
-        isFitting = false;
-      }
-    })
+    const itemXOff = item.x - this.x;
+    const itemYOff = item.y - this.y;
+    const slotPositionVector = {
+      x: Math.floor(itemXOff / 64),
+      y: Math.floor(itemYOff / 64)
+    }
 
-    return isFitting;
+    this.highlightedArea = {
+      x: this.x + (slotPositionVector.x * 64),
+      y: this.y + (slotPositionVector.y * 64),
+      width: item.width,
+      height: item.height,
+      fits: this.itemFitInContainer(slotPositionVector, item)
+    };
   }
 
   render (render) {
@@ -170,6 +207,9 @@ export default class Container {
 
     this.renderGrid(render)
     this.renderItems(render)
+    if (this.highlightedArea) {
+      this.renderHighlightedArea(render)
+    }
   }
 
   renderItems (render) {
@@ -178,7 +218,18 @@ export default class Container {
     render.drawEntities(items);
   }
 
-  renderGrid(render) {
+  renderHighlightedArea (render) {
+    const ctx = render.ctx;
+    const { x, y, width, height, fits } = this.highlightedArea;
+
+    ctx.fillStyle = (fits) ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
+
+    ctx.beginPath();
+    ctx.rect(x, y, width, height);
+    ctx.fill();
+  }
+
+  renderGrid (render) {
     const ctx = render.ctx;
     const { rows, columns } = this;
 
