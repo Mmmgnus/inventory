@@ -51,6 +51,7 @@ export default class Container {
   getItemBySlot (queryVector, item) {
     const x2 = queryVector.x + item.slotSizeX - 1;
     const y2 = queryVector.y + item.slotSizeY - 1;
+
     return this.slots.filter((slot) => {
         let found = false; 
         if (queryVector.x >= slot.size.x[0] && slot.size.x[1] >= queryVector.x && queryVector.y >= slot.size.y[0] && slot.size.y[1] >= queryVector.y) {
@@ -164,7 +165,15 @@ export default class Container {
   }
 
   itemFitInContainer(itemVector, item) {
-      return !this.getItemBySlot(itemVector, item).length
+      // calculate the end slot position.
+      // itemVector is the top left most slot where we want to place the item.
+      // by adding the slotSize of the item to the itemVector we get the bottom right most slot.
+      const x2 = itemVector.x + item.slotSizeX - 1;
+      const y2 = itemVector.y + item.slotSizeY - 1;
+
+      return x2 < this.columns && y2 < this.rows
+        && itemVector.x > -1 && itemVector.y > -1
+        && !this.getItemBySlot(itemVector, item).length
   }
 
   highlightSlots (item) {
@@ -204,6 +213,8 @@ export default class Container {
       64 * rows + 4
     )
     ctx.stroke();
+    ctx.fillStyle = '#fff',
+    ctx.fillText(`x: ${this.x}, y:${this.y}`, x - 10, y - 20);
 
     this.renderGrid(render)
     this.renderItems(render)

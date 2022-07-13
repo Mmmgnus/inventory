@@ -36,7 +36,7 @@ export default class Item extends Entity {
     ctx.fill()
     sprite.render(ctx, x, y);
     ctx.fillStyle = '#fff',
-    ctx.fillText(`itemId: ${this.itemId}`, x + 10, y + 20);
+    ctx.fillText(`itemId: ${this.itemId}, x: ${this.x}, y:${this.y}`, x + 10, y + 20);
     ctx.stroke();
   }
 }

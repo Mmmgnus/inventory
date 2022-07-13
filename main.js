@@ -3,6 +3,17 @@ import Container from './Container.js';
 import Render from './Render.js';
 import AssetsLoader from './assetsLoader.js';
 
+const debugInfo = {
+  items: [],
+}
+
+function createItem (itemProps) {
+  const item = new Item(itemProps);
+  debugInfo.items.push(item);
+
+  return item;
+}
+
 const assetsLoader = new AssetsLoader();
 const render = new Render({
   id: 'canvas',
@@ -37,7 +48,7 @@ assetsLoader.load([
 const stash = new Container({ x: 64, y: 300, columns: 10, rows: 13 });
 stash.addItem({
   position: { x: 1, y: 1 },
-  item: new Item({
+  item: createItem({
     itemId: 3,
     slotSizeX: 2, 
     slotSizeY: 2
@@ -46,7 +57,7 @@ stash.addItem({
 
 stash.addItem({
   position: { x: 1, y: 3 },
-  item: new Item({
+  item: createItem({
     itemId: 5,
     slotSizeX: 2,
     slotSizeY: 3
@@ -55,7 +66,7 @@ stash.addItem({
 
 stash.addItem({
   position: { x: 1, y: 6 },
-  item: new Item({
+  item: createItem({
     itemId: 4,
     slotSizeX: 6,
     slotSizeY: 2
@@ -64,7 +75,7 @@ stash.addItem({
 
 stash.addItem({
   position: { x: 3, y: 1 },
-  item: new Item({
+  item: createItem({
     itemId: 6,
     slotSizeX: 4,
     slotSizeY: 5
@@ -73,7 +84,7 @@ stash.addItem({
 
 stash.addItem({
   position: { x: 7, y: 1 },
-  item: new Item({
+  item: createItem({
     itemId: 8,
     slotSizeX: 4,
     slotSizeY: 5
@@ -82,7 +93,7 @@ stash.addItem({
 
 stash.addItem({
   position: { x: 7, y: 6 },
-  item: new Item({
+  item: createItem({
     itemId: 7,
     slotSizeX: 4,
     slotSizeY: 4
@@ -91,7 +102,7 @@ stash.addItem({
 
 stash.addItem({
   position: { x: 1, y: 8 },
-  item: new Item({
+  item: createItem({
     itemId: 10,
     slotSizeX: 4,
     slotSizeY: 2
@@ -101,7 +112,7 @@ stash.addItem({
 const smallContainer = new Container({ x: 256, y: 64, columns: 1, rows: 2})
 smallContainer.addItem({
   position: { x: 1, y: 1 },
-  item: new Item({
+  item: createItem({
     itemId: 1,
     slotSizeX: 1,
     slotSizeY: 1,
@@ -110,7 +121,7 @@ smallContainer.addItem({
 
 smallContainer.addItem({
   position: { x: 1, y: 2 },
-  item: new Item({
+  item: createItem({
     itemId: 1,
     slotSizeX: 1,
     slotSizeY: 1,
@@ -120,7 +131,7 @@ smallContainer.addItem({
 const mediumContainer = new Container({ x: 64, y: 64, columns: 2, rows: 2 })
 mediumContainer.addItem({
   position: { x: 1, y: 2 },
-  item: new Item({
+  item: createItem({
     itemId: 1,
     slotSizeX: 1,
     slotSizeY: 1,
@@ -129,7 +140,7 @@ mediumContainer.addItem({
 
 mediumContainer.addItem({
   position: { x: 1, y: 1 },
-  item: new Item({
+  item: createItem({
     itemId: 2,
     slotSizeX: 2,
     slotSizeY: 1,
@@ -138,7 +149,7 @@ mediumContainer.addItem({
 
 // mediumContainer.addItem({
 //   position: { x: 2, y: 2 },
-//   item: new Item({
+//   item: createItem({
 //     itemId: 9,
 //     slotSizeX: 1,
 //     slotSizeY: 1,
@@ -250,6 +261,7 @@ function releaseHandler (event) {
     targetContainer.highlightSlots();
     const mouseXOff = event.clientX - targetContainer.x;
     const mouseYOff = event.clientY - targetContainer.y;
+
     const slotPositionVector = {
       x: Math.floor(mouseXOff / 64),
       y: Math.floor(mouseYOff / 64)
@@ -265,8 +277,8 @@ function releaseHandler (event) {
       y: Math.floor((itemYoff) / 64),
     }
     
-    targetContainer.getItemBySlot(slotPosition, draggedItem);
-    const vector = (slotPosition.x !== -1 && slotPosition.y !== -1) ? slotPosition : slotPositionVector;
+    // const temp = targetContainer.getItemBySlot(slotPosition, draggedItem);
+    const vector = slotPosition;
 
     if (targetContainer.itemFitInContainer(vector, draggedItem)) {
       if(!targetContainer.contains(draggedItem)) {
@@ -295,6 +307,8 @@ function releaseHandler (event) {
   // myAudio.pause();
   myAudio.currentTime = 0,
   myAudio.play(0);
+
+  console.table(debugInfo.items);
 }
 
 function renderContainers (containers) {
