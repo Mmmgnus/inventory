@@ -21,7 +21,7 @@ const render = new Render({
 });
 
 var myAudio = document.createElement('audio');
-myAudio.src = './sounds/item-pickup.wav';
+myAudio.src = './sounds/item-pickup.webm';
 
 let draggedItem;
 let draggedItemStartVector;
@@ -30,16 +30,16 @@ let draggedItemContainer;
 let containers = [];
 
 assetsLoader.load([
-  { id: 1, src: './images/1.png', width: 64, height: 64 },
-  { id: 2, src: './images/2.png', width: 128, height: 64 },
-  { id: 3, src: './images/3.png', width: 128, height: 128 },
-  { id: 4, src: './images/4.png', width: 384, height: 128 },
-  { id: 5, src: './images/5.png', width: 128, height: 192 },
-  { id: 6, src: './images/6.png', width: 256, height: 320 },
-  { id: 7, src: './images/7.png', width: 256, height: 256 },
-  { id: 8, src: './images/8.png', width: 256, height: 320 },
-  { id: 9, src: './images/9.png', width: 64, height: 64 },
-  { id: 10, src: './images/10.png', width: 256, height: 128 },
+  { id: 1, src: './images/1.webp', width: 64, height: 64 },
+  { id: 2, src: './images/2.webp', width: 128, height: 64 },
+  { id: 3, src: './images/3.webp', width: 128, height: 128 },
+  { id: 4, src: './images/4.webp', width: 384, height: 128 },
+  { id: 5, src: './images/5.webp', width: 128, height: 192 },
+  { id: 6, src: './images/6.webp', width: 256, height: 320 },
+  { id: 7, src: './images/7.webp', width: 256, height: 256 },
+  { id: 8, src: './images/8.webp', width: 256, height: 320 },
+  { id: 9, src: './images/9.webp', width: 64, height: 64 },
+  { id: 10, src: './images/10.webp', width: 256, height: 128 },
 ]).then(() => {
   console.info('[Assets loaded]');
   requestAnimationFrame(tick);
