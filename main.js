@@ -189,7 +189,7 @@ function clickHandler (event) {
 
   if (itemResult) {
     let item = itemResult.item;
-    console.info(` Item [${item.id}:${item.itemId}] is clicked.`);
+
     item.dragged = true;
     draggedItem = item;
     draggedItemStartVector = {
@@ -233,9 +233,6 @@ function moveHandler (event) {
     }
 
     container.highlightSlots(item)
-
-    // console.log('Slot:', slotPositionVector);
-    // console.log('Mouse:', mouse.x, mouse.y)
   }
   else {
     containers.forEach((container) => container.highlightSlots())
@@ -307,8 +304,6 @@ function releaseHandler (event) {
   // myAudio.pause();
   myAudio.currentTime = 0,
   myAudio.play(0);
-
-  console.table(debugInfo.items);
 }
 
 function renderContainers (containers) {

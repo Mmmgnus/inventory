@@ -28,7 +28,14 @@ export default class Container {
 
   /*
 
-  { x: [], y: [] }
+      0   1   2
+  0 |   |   |   |
+  1 |   |   |   |
+  2 |   |   |   |
+  3 |   |   |   |
+
+  The position of a item is stored in this format:
+  { x: [x1, x2], y: [y1, y2] }
 
         z   z
   | a | a |   |  
@@ -47,16 +54,24 @@ export default class Container {
   x vs a = zx2(1) => ax2(0) && zx2(1) <= ax2(1) == miss!
   x vs a = zy1(0) => ay1(0) && zy2(0) <= ay2(0) == hit!
   x vs a = zy2(0) => ay2(0) && zy2(0) <= ay2(0) == hit!
+
+
+
+  check if zx1 is bigger= ax1 and smaller= ax2
+  check if zx2 is bigger= ax1 and smaller= ax2
+  check if zy1 is bigger= ay1 and smaller= ay2 
+  check if zy2 is bigger= ay1 and smaller= ay2
   */
   getItemBySlot (queryVector, item) {
-    const x2 = queryVector.x + item.slotSizeX - 1;
-    const y2 = queryVector.y + item.slotSizeY - 1;
+    const x2 = queryVector.x;
+    const y2 = queryVector.y;
 
     return this.slots.filter((slot) => {
         let found = false; 
         if (queryVector.x >= slot.size.x[0] && slot.size.x[1] >= queryVector.x && queryVector.y >= slot.size.y[0] && slot.size.y[1] >= queryVector.y) {
           found = true;
         }
+
         if (x2 <= slot.size.x[1] && x2 >= slot.size.x[0] && y2 <= slot.size.y[1] && y2 >= slot.size.y[0] && queryVector.y < slot.size.x[1] && queryVector.y > slot.size.x[0]) {
           found = true;
         }
@@ -134,11 +149,9 @@ export default class Container {
   }
 
   add(item, slotPosition) {
-    const xSize = item.width / 64;
-    const ySize = item.height / 64;
     const slotVector = {
-      x: [slotPosition.x, (xSize === 1) ? slotPosition.x : xSize - 1],
-      y: [slotPosition.y, (ySize === 1) ? slotPosition.y : ySize - 1],
+      x: [slotPosition.x, slotPosition.x + item.slotSizeX - 1],
+      y: [slotPosition.y, slotPosition.y + item.slotSizeY - 1],
     }
 
     // Update item position.
@@ -158,6 +171,8 @@ export default class Container {
         item: item
       })
     }
+
+    console.table(this.slots.map((slot) => [`${slot.size.x} - ${slot.size.y}`, slot.item.itemId]));
   }
 
   remove (item) {    
@@ -171,9 +186,29 @@ export default class Container {
       const x2 = itemVector.x + item.slotSizeX - 1;
       const y2 = itemVector.y + item.slotSizeY - 1;
 
+      const startX = itemVector.x;
+      const loopX = item.slotSizeX;
+      const startY = itemVector.y;
+      const loopY = item.slotSizeY;
+
+      for (var i=0; i< loopY; i++) {
+        for (var j=0; j< loopX; j++) {
+          const slot = {
+            x: startX + j,
+            y: startY + i
+          }
+
+          const itemInSlot = this.getItemBySlot(slot, item)
+
+          if (itemInSlot.length && !itemInSlot.find((item) => item.id === item.id)) {
+            return false;
+          }
+        }
+      }
+
       return x2 < this.columns && y2 < this.rows
         && itemVector.x > -1 && itemVector.y > -1
-        && !this.getItemBySlot(itemVector, item).length
+        // && !this.getItemBySlot(itemVector, item).length
   }
 
   highlightSlots (item) {
@@ -213,8 +248,6 @@ export default class Container {
       64 * rows + 4
     )
     ctx.stroke();
-    ctx.fillStyle = '#fff',
-    ctx.fillText(`x: ${this.x}, y:${this.y}`, x - 10, y - 20);
 
     this.renderGrid(render)
     this.renderItems(render)
