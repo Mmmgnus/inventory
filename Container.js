@@ -171,8 +171,6 @@ export default class Container {
         item: item
       })
     }
-
-    console.table(this.slots.map((slot) => [`${slot.size.x} - ${slot.size.y}`, slot.item.itemId]));
   }
 
   remove (item) {    
@@ -200,7 +198,7 @@ export default class Container {
 
           const itemInSlot = this.getItemBySlot(slot, item)
 
-          if (itemInSlot.length && !itemInSlot.find((item) => item.id === item.id)) {
+          if (itemInSlot.length && !itemInSlot.find((slotItem) => slotItem.item.id === item.id)) {
             return false;
           }
         }
